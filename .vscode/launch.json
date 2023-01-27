@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "type": "node",
+            "name": "Attach Backend Debugger",
+            "port": 9229,
+            "request": "attach",
+            "cwd": "${workspaceFolder}/backend",
+            "skipFiles": [
+                "<node_internals>/**",
+                "/build"
+            ],
+            "restart": true
+        }
+    ],
+}
