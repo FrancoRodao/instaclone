@@ -43,6 +43,7 @@ export class ExpressServerAdapter implements IHttpServer<Router> {
     */
     this.loadMiddlewares()
     apiVersion.configureRoutes()
+    logger.info(`API V${apiVersion.getVersion()} routes ON`)
     this.useMiddleware(this.errorHandlerMiddleware)
 
     const runningMessage = `Server running at http://localhost:${port} 🚀`
