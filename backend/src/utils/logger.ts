@@ -1,5 +1,5 @@
 import winston from 'winston'
-import { isDevelopmentENV, isProductionENV, isDebugENV } from './environments'
+import { isDevelopmentENV, isProductionENV, isDebugENV, isTestENV } from './environments'
 
 type IMetadata = Record<string, Object>
 
@@ -50,10 +50,11 @@ class Logger {
       level: level(),
       levels,
       format,
-      transports: []
+      transports: [],
+      silent: isTestENV
     })
 
-    if (isDevelopmentENV || isDebugENV) {
+    if (isDevelopmentENV || isDebugENV || isTestENV) {
       this.logger.add(new winston.transports.Console({
         level: isDebugENV ? 'debug' : 'info'
       }))
