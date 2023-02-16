@@ -42,6 +42,10 @@ export class ExpressRouterAdapter extends BaseRouter<expressRouter> {
     }
   }
 
+  public all (path: string, middlewares: BaseMiddleware[]) {
+    this.adaptRoute('all')(path, middlewares)
+  }
+
   public get (path: string, middlewares: BaseMiddleware[], controller: BaseController) {
     this.adaptRoute('get')(path, middlewares, controller)
   }

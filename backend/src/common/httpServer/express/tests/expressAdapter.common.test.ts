@@ -73,7 +73,7 @@ describe('Testing express router adapter', () => {
   test('should adapt testingPathRoute post route to express post route', () => {
     expressTestRouterAdapter.post(pathName, [new BasicMiddleware()], new BasicController())
 
-    // SHOULD BE A GET ROUTE
+    // SHOULD BE A POST ROUTE
     expect(nativeExpressRouter.stack[0].route.methods.post).toBe(true)
 
     // PATH ROUTE NAME
@@ -86,7 +86,7 @@ describe('Testing express router adapter', () => {
   test('should adapt testingPathRoute put route to express put route', () => {
     expressTestRouterAdapter.put(pathName, [new BasicMiddleware()], new BasicController())
 
-    // SHOULD BE A GET ROUTE
+    // SHOULD BE A PUT ROUTE
     expect(nativeExpressRouter.stack[0].route.methods.put).toBe(true)
 
     // PATH ROUTE NAME
@@ -99,7 +99,7 @@ describe('Testing express router adapter', () => {
   test('should adapt testingPathRoute patch route to express patch route', () => {
     expressTestRouterAdapter.patch(pathName, [new BasicMiddleware()], new BasicController())
 
-    // SHOULD BE A GET ROUTE
+    // SHOULD BE A PATCH ROUTE
     expect(nativeExpressRouter.stack[0].route.methods.patch).toBe(true)
 
     // PATH ROUTE NAME
@@ -112,7 +112,7 @@ describe('Testing express router adapter', () => {
   test('should adapt testingPathRoute delete route to express delete route', () => {
     expressTestRouterAdapter.delete(pathName, [new BasicMiddleware()], new BasicController())
 
-    // SHOULD BE A GET ROUTE
+    // SHOULD BE A DELETE ROUTE
     expect(nativeExpressRouter.stack[0].route.methods.delete).toBe(true)
 
     // PATH ROUTE NAME
@@ -120,6 +120,19 @@ describe('Testing express router adapter', () => {
 
     // MIDDLEWARE LAYER AND CONTROLLER LAYER ( 2 )
     expect(nativeExpressRouter.stack[0].route.stack.length).toBe(2)
+  })
+
+  test('should adapt testingPathRoute all route to express all route', () => {
+    expressTestRouterAdapter.all(pathName, [new BasicMiddleware()])
+
+    // SHOULD BE A ALL ROUTE
+    expect(nativeExpressRouter.stack[0].route.methods._all).toBe(true)
+
+    // PATH ROUTE NAME
+    expect(nativeExpressRouter.stack[0].route.path).toBe(pathName)
+
+    // MIDDLEWARE LAYER ( 1 )
+    expect(nativeExpressRouter.stack[0].route.stack.length).toBe(1)
   })
 })
 
