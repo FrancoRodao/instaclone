@@ -21,7 +21,6 @@ const middlewareFunctionMock = jest.fn()
 
 class BasicMiddleware extends BaseMiddleware {
   processRequest (req: IControllerRequest, next: INextFunction): void {
-    console.log('passed through the basic middleware')
     middlewareFunctionMock()
     next()
   }
@@ -147,7 +146,7 @@ describe('Testing express server adapter', () => {
     expressServerAdapter = new ExpressServerAdapter(nativeExpressApp)
     expressTestRouterAdapter = expressServerAdapter.createRouter('test router')
 
-    expressServerAdapter.init(3000, new APIVersionTest(expressServerAdapter))
+    expressServerAdapter.init(3001, new APIVersionTest(expressServerAdapter))
   })
 
   afterEach(() => {
