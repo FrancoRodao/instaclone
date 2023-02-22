@@ -12,7 +12,7 @@ import express from 'express'
 import { ExpressServerAdapter } from './common/httpServer/express/expressServer.common'
 import { databaseInit } from './common/database/init.database'
 import { APIVersion1 } from './common/APIVersions/APIVersion1'
-import { errorHandler } from './common/errors/errorHandler.common'
+import { apiErrorHandler } from './common/errors/errorHandler.common'
 // eslint-disable-next-line import/no-duplicates
 import { environment } from './common/config/environment.config'
 
@@ -26,9 +26,9 @@ databaseInit().then(() => {
 
 // shutdowns server if something goes wrong
 process.on('uncaughtException', (error: Error) => {
-  errorHandler.handleUnexpectedError(error)
+  apiErrorHandler.handleUnexpectedError(error)
 
-  if (!errorHandler.isTrustedError(error)) {
+  if (!apiErrorHandler.isTrustedError(error)) {
     process.exit(1)
   }
 })

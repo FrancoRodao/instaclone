@@ -1,7 +1,7 @@
-import { BaseError } from '../../errors/errors.common'
+import { APIBaseError } from '../../errors/errors.common'
 
 export interface INextFunction {
-  (error?: BaseError): void;
+  (error?: APIBaseError): void;
 }
 
 export interface IControllerResponse{

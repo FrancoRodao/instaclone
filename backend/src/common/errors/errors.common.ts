@@ -12,7 +12,7 @@ export type ErrorsObjectInfo = Array<ErrorObjectInfo>
 
 // TODO: DOCUMENTATION ABOUT WHAT IS OPERATIONAL , name error etc
 
-export class BaseError extends Error {
+export class APIBaseError extends Error {
   readonly name: string
   readonly errorInfo: ErrorsObjectInfo
   readonly httpCode: HttpStatusCodes
@@ -32,19 +32,19 @@ export class BaseError extends Error {
   }
 }
 
-export class UnexpectedError extends BaseError {
+export class UnexpectedError extends APIBaseError {
   constructor (errorInfo: ErrorObjectInfo) {
     super('Unexpected error - Internal server', [errorInfo], HttpStatusCodes.INTERNAL_SERVER, false)
   }
 }
 
-export class ValidationError extends BaseError {
+export class ValidationError extends APIBaseError {
   constructor (errorInfo: ErrorsObjectInfo) {
     super('Validation error - Bad request', errorInfo, HttpStatusCodes.BAD_REQUEST, true)
   }
 }
 
-export class BadRequestError extends BaseError {
+export class BadRequestError extends APIBaseError {
   constructor (errorInfo: ErrorObjectInfo) {
     super(`${errorInfo.msg} - Bad request`, [errorInfo], HttpStatusCodes.BAD_REQUEST, true)
   }

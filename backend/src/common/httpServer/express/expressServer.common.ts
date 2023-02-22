@@ -3,7 +3,7 @@ import { Application, NextFunction, Request, Response, Router, json } from 'expr
 import { logger } from '../../../utils'
 import { IHttpServer } from '../interfaces'
 import { ExpressRouterAdapter } from './expressRouter.common'
-import { errorHandler } from '../../errors/errorHandler.common'
+import { apiErrorHandler } from '../../errors/errorHandler.common'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
@@ -63,8 +63,8 @@ export class ExpressServerAdapter implements IHttpServer<Router> {
   }
 
   private errorHandlerMiddleware (error: Error, req: Request, res: Response, next: NextFunction): void {
-    if (!errorHandler.isTrustedError(error)) {
-      const { ok, status, errors } = errorHandler.handleUnexpectedError(error)
+    if (!apiErrorHandler.isTrustedError(error)) {
+      const { ok, status, errors } = apiErrorHandler.handleUnexpectedError(error)
 
       res.status(status).json({
         ok,
@@ -77,7 +77,7 @@ export class ExpressServerAdapter implements IHttpServer<Router> {
     }
 
     // @ts-ignore-line always is a TrustedError (base error)
-    const { ok, status, errors } = errorHandler.handleTrustedError(error)
+    const { ok, status, errors } = apiErrorHandler.handleTrustedError(error)
 
     res.status(status).json({
       ok,
