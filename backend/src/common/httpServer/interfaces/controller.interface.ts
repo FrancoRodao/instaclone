@@ -18,5 +18,5 @@ export interface IControllerRequest{
 }
 
 export abstract class BaseController {
-  public abstract processRequest(req: IControllerRequest, next: INextFunction): Promise<IControllerResponse> | IControllerResponse
+  public abstract processRequest(req: IControllerRequest, next: INextFunction): Promise<IControllerResponse | void> | IControllerResponse | void
 }

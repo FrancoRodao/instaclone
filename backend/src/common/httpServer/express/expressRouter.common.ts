@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, Router as expressRouter, RequestHandler } from 'express'
 import { BaseController, BaseMiddleware } from '../interfaces'
 import { IHttpVerbs, BaseRouter } from '../../router/baseRouter.common'
+import { UnexpectedError } from '../../errors/errors.common'
 
 export class ExpressRouterAdapter extends BaseRouter<expressRouter> {
   constructor (public name: string, router: expressRouter) {
@@ -16,12 +17,21 @@ export class ExpressRouterAdapter extends BaseRouter<expressRouter> {
   protected adaptController (controller: BaseController) {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const { ok, status, msg } = await controller.processRequest({ body: req.body, params: req.params, headers: req.headers }, next)
+        const controllerResponse = await controller.processRequest({ body: req.body, params: req.params, headers: req.headers }, next)
 
-        res.status(status).json({
-          ok,
-          status,
-          msg
+        if (controllerResponse) {
+          const { ok, status, msg } = controllerResponse
+
+          return res.status(status).json({
+            ok,
+            status,
+            msg
+          })
+        }
+
+        throw new UnexpectedError({
+          msg: 'Time out',
+          info: 'No response has been receive from the controller, check controller response'
         })
       } catch (err) {
         next(err)
