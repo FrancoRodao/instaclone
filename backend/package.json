@@ -63,7 +63,8 @@
 	"ts-standard": {
 		"project": "./tsconfig.json",
 		"ignore": [
-			"build"
+			"build",
+			"node_modules"
 		]
 	}
 }
