@@ -1,4 +1,3 @@
-/* eslint-disable prefer-promise-reject-errors */
 // TODO: abstract jwt
 import jwt from 'jsonwebtoken'
 import { environment } from '../../common/config/environment.config'
@@ -30,10 +29,9 @@ export class AuthTokenService implements IAuthTokenService {
         environment.SECRET_KEY,
         { expiresIn: '5m' },
         (err, accessToken) => {
-          if (err) reject(err)
+          if (err || !accessToken) reject(err)
 
-          // ternary so that the token is always a string and not undefined
-          accessToken ? resolve(accessToken) : reject()
+          if (accessToken) resolve(accessToken)
         }
       )
     })
@@ -49,8 +47,7 @@ export class AuthTokenService implements IAuthTokenService {
           // TODO: CREATE VALIDS REFRESH TOKENS
           // await new ValidTokens({ token: refreshToken }).save()
 
-          // ternary so that the token is always a string and not undefined
-          refreshToken ? resolve(refreshToken) : reject()
+          if (refreshToken) resolve(refreshToken)
         }
       )
     })
