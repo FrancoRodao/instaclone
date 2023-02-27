@@ -1,12 +1,10 @@
 import 'reflect-metadata'
 import { BadRequestError } from '../../errors/errors.common'
-import { dependencyContainer } from '../../IOC/global.container'
-import { globalContainerTypes } from '../../IOC/types'
-import { BaseMiddleware } from '../middleware.interface'
-import { I18NService } from '../../i18n/i18n'
+import { I18NNextService } from '../../i18n/i18n'
+import { TranslationMiddleware } from '../translation.middleware'
 
-const I18NServiceInstance = dependencyContainer.resolve<I18NService>(globalContainerTypes.I18NService)
-const translationMiddleware = dependencyContainer.resolve<BaseMiddleware>(globalContainerTypes.TranslationMiddleware)
+const I18NService = new I18NNextService()
+const translationMiddleware = new TranslationMiddleware(I18NService)
 
 describe('Testing translation middleware class', () => {
   const nextFunction = jest.fn()
@@ -58,7 +56,7 @@ describe('Testing translation middleware class', () => {
 
     translationMiddleware.processRequest(requestObj, nextFunction)
 
-    expect(I18NServiceInstance.currentLanguage).toBe(langToChange)
+    expect(I18NService.currentLanguage).toBe(langToChange)
     expect(nextFunction).toBeCalledTimes(1)
   })
 })
