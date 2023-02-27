@@ -1,5 +1,5 @@
 import { injectable, inject } from 'tsyringe'
-import { authContainerTypes } from '../../common/IOC'
+import { authContainerTypes } from '../../common/IOC/types'
 import { BaseController, IControllerRequest, IControllerResponse, INextFunction } from '../../common/httpServer/interfaces'
 import { IUserDTO } from '../../users/dtos/User.dto'
 import { BadRequestError, HttpStatusCodes } from '../../common/errors/errors.common'
@@ -13,7 +13,6 @@ export class SignInController extends BaseController {
   constructor (
         @inject(authContainerTypes.AuthService) authService: IAuthService,
         @inject(authContainerTypes.AuthTokenService) authTokenService: IAuthTokenService
-
   ) {
     super()
 

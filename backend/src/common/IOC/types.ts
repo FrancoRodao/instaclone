@@ -1,6 +1,7 @@
 /*
  Types must be in a separate file,
  otherwise dependency injection will not work.
+ (typescript/decorators issue)
 */
 
 export const globalContainerTypes = {

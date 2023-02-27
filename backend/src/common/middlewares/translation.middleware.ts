@@ -4,7 +4,7 @@ import { BaseMiddleware } from './middleware.interface'
 import { I18NService } from '../i18n/i18n'
 import { BadRequestError } from '../errors/errors.common'
 import { isProductionENV } from '../../utils/environments'
-import { globalContainerTypes } from '../IOC'
+import { globalContainerTypes } from '../IOC/types'
 
 @injectable()
 export class TranslationMiddleware extends BaseMiddleware {

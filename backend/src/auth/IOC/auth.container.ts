@@ -1,30 +1,34 @@
 import { BaseController } from '../../common/httpServer/interfaces/controller.interface'
-import { dependencyContainer, authContainerTypes } from '../../common/IOC'
-import { AuthService, IAuthService, AuthTokenService, IAuthTokenService } from '../services/index'
+import { dependencyContainer } from '../../common/IOC/global.container'
+import { authContainerTypes } from '../../common/IOC/types'
+import { AuthService, IAuthService, AuthTokenService, IAuthTokenService } from '../services'
 import { SignInController, SignUpController } from '../controllers'
-
-// TODO: STUDY DIFFERENT TYPES OF DI EXAMPLE I18N MUST BE A SINGLETON
+import { Lifecycle } from 'tsyringe'
 
 export function loadAuthContainer () {
   // services
   dependencyContainer.register<IAuthService>(
     authContainerTypes.AuthService,
-    { useClass: AuthService }
+    { useClass: AuthService },
+    { lifecycle: Lifecycle.Singleton }
   )
 
   dependencyContainer.register<IAuthTokenService>(
     authContainerTypes.AuthTokenService,
-    { useClass: AuthTokenService }
+    { useClass: AuthTokenService },
+    { lifecycle: Lifecycle.Singleton }
   )
 
   // controllers
   dependencyContainer.register<BaseController>(
     authContainerTypes.SignUpController,
-    { useClass: SignUpController }
+    { useClass: SignUpController },
+    { lifecycle: Lifecycle.Singleton }
   )
 
   dependencyContainer.register<BaseController>(
     authContainerTypes.SignInController,
-    { useClass: SignInController }
+    { useClass: SignInController },
+    { lifecycle: Lifecycle.Singleton }
   )
 }

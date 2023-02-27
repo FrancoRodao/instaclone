@@ -3,10 +3,8 @@
 // eslint-disable-next-line import/no-duplicates
 import './common/config/environment.config'
 
-// init dependency container
-// TODO: CREATE INIT CONTAINER FUNCTION
 import 'reflect-metadata'
-import './common/IOC/global.container'
+import { loadDependencyContainers } from './common/IOC/global.container'
 
 import express from 'express'
 import { ExpressServerAdapter } from './common/httpServer/express/expressServer.common'
@@ -17,6 +15,8 @@ import { apiErrorHandler } from './common/errors/errorHandler.common'
 import { environment } from './common/config/environment.config'
 
 databaseInit().then(() => {
+  loadDependencyContainers()
+
   const app = new ExpressServerAdapter(express())
   const port = Number(environment.port || 3000)
   const apiVersion1 = new APIVersion1(app)

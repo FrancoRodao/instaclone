@@ -7,16 +7,22 @@ import { TranslationMiddleware, BaseMiddleware } from '../middlewares'
 
 export const dependencyContainer = container
 
-dependencyContainer.register<I18NService>(
-  globalContainerTypes.I18NService,
-  { useClass: I18NNextService },
-  { lifecycle: Lifecycle.Singleton }
-)
+function loadGlobalContainer () {
+  dependencyContainer.register<I18NService>(
+    globalContainerTypes.I18NService,
+    { useClass: I18NNextService },
+    { lifecycle: Lifecycle.Singleton }
+  )
 
-dependencyContainer.register<BaseMiddleware>(
-  globalContainerTypes.TranslationMiddleware,
-  { useClass: TranslationMiddleware }
-)
+  dependencyContainer.register<BaseMiddleware>(
+    globalContainerTypes.TranslationMiddleware,
+    { useClass: TranslationMiddleware },
+    { lifecycle: Lifecycle.Singleton }
+  )
+}
 
-loadAuthContainer()
-loadUsersContainer()
+export function loadDependencyContainers () {
+  loadGlobalContainer()
+  loadAuthContainer()
+  loadUsersContainer()
+}

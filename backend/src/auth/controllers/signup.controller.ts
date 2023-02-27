@@ -1,5 +1,5 @@
 import { injectable, inject } from 'tsyringe'
-import { globalContainerTypes, authContainerTypes } from '../../common/IOC'
+import { globalContainerTypes, authContainerTypes } from '../../common/IOC/types'
 import { BaseController, IControllerRequest, IControllerResponse, INextFunction } from '../../common/httpServer/interfaces'
 import { I18NService } from '../../common/i18n/i18n'
 import { IUserDTO } from '../../users/dtos/User.dto'

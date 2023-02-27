@@ -1,4 +1,5 @@
-import { dependencyContainer, globalContainerTypes, authContainerTypes } from '../../common/IOC'
+import { globalContainerTypes, authContainerTypes } from '../../common/IOC/types'
+import { dependencyContainer } from '../../common/IOC/global.container'
 import { signUpSchemaValidationMiddleware, sanitizeUser } from '../middlewares'
 import { BaseMiddleware } from '../../common/middlewares'
 import { IHttpServer } from '../../common/httpServer/interfaces'

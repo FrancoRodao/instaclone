@@ -1,4 +1,5 @@
-import { dependencyContainer, usersContainerTypes } from '../../common/IOC'
+import { dependencyContainer } from '../../common/IOC/global.container'
+import { usersContainerTypes } from '../../common/IOC/types'
 import { SequelizeUserRepository, IUserRepository } from '../repositories/users.repository'
 
 export function loadUsersContainer () {
