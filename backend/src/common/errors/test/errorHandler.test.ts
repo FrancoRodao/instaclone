@@ -1,5 +1,6 @@
-import { APIBaseError, HttpStatusCodes } from '../errors.common'
+import { APIBaseError } from '../errors.common'
 import { apiErrorHandler } from '../errorHandler.common'
+import { HttpStatusCodes } from '../../httpServer/interfaces'
 
 describe('Testing api error handler class', () => {
   const unexpectedErrorMsg = 'Unexpected error :('
