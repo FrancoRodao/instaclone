@@ -1,55 +1,64 @@
 import { injectable, inject } from 'tsyringe'
-import { usersContainerTypes, globalContainerTypes } from '../../common/IOC/types'
+import { usersContainerTypes, globalContainerTypes, authContainerTypes } from '../../common/IOC/types'
 import { IUserDTO } from '../../users/dtos/User.dto'
-import { IUserRepository } from '../../users/repositories/users.repository'
 import { I18NService } from '../../common/i18n/i18n'
+import { IUserService } from '../../users/services/users.service'
+import { AuthTokens, IAuthTokenService } from './token.service'
 
+type IUserResponse = (IUserDTO & AuthTokens) | null
 export interface IAuthService{
-  findUserByEmail (email: string): Promise<IUserDTO | null>,
-  signUp (userDTO: IUserDTO): Promise<IUserDTO>,
-  signIn (user: IUserDTO): Promise<{ success: boolean, translatedMsg: string, user: IUserDTO | null }>
+  signUp (userDTO: IUserDTO): Promise<{ success: boolean, translatedMsg: string, user: IUserResponse }>,
+  signIn (userDTO: IUserDTO): Promise<{ success: boolean, translatedMsg: string, user: IUserResponse }>
 }
 
 @injectable()
 export class AuthService implements IAuthService {
   private I18NService: I18NService
-  private userRepository: IUserRepository
+  private userService: IUserService
+  private authTokenService: IAuthTokenService
 
   constructor (
     @inject(globalContainerTypes.I18NService) I18NService: I18NService,
-    @inject(usersContainerTypes.UserRepository) userRepository: IUserRepository
+    @inject(usersContainerTypes.UserService) userService: IUserService,
+    @inject(authContainerTypes.AuthTokenService) authTokenService: IAuthTokenService
+
   ) {
     this.I18NService = I18NService
-    this.userRepository = userRepository
+    this.userService = userService
+    this.authTokenService = authTokenService
   }
 
-  // MUST BE IN USER SERVICE
-  async findUserByEmail (email: string) {
-    const user = await this.userRepository.findByEmail(email)
+  async signUp (userDTO: IUserDTO): Promise<{ success: boolean, translatedMsg: string, user: IUserResponse }> {
+    const userExists = await this.userService.isUserExists(userDTO.email)
 
-    return user?.transformToUserDto() ?? null
-  }
-
-  async signUp (userDTO: IUserDTO) {
-    const newUser = await this.userRepository.create(userDTO)
-
-    return newUser.transformToUserDto()
-  }
-
-  async signIn (user: IUserDTO): Promise<{ success: boolean; translatedMsg: string; user: IUserDTO | null }> {
-    const userFound = await this.userRepository.findByEmail(user.email)
-
-    if (!userFound) {
+    if (userExists) {
       return {
         success: false,
-        translatedMsg: this.I18NService.translate('errors.UsersDoesntExists'),
+        translatedMsg: this.I18NService.translate('errors.EmailIsAlreadyRegistered'),
         user: null
       }
     }
 
-    const isCorrectPassword = await userFound.isCorrectPassword(user.password, userFound.password)
+    const newUser = await this.userService.create(userDTO)
 
-    if (!isCorrectPassword) {
+    const { accessToken, refreshToken } = await this.authTokenService.generateAuthToken(newUser)
+
+    // TODO: ADD TRANSLATION TO SUCCESS MSG
+    return {
+      success: true,
+      translatedMsg: 'successful signup',
+      user: {
+        ...newUser,
+        accessToken,
+        refreshToken
+      }
+    }
+  }
+
+  async signIn (userDTO: IUserDTO): Promise<{ success: boolean; translatedMsg: string; user: IUserResponse }> {
+    const userFound = await this.userService.areValidUserCredentials(userDTO.email, userDTO.password)
+
+    if (!userFound) {
       return {
         success: false,
         translatedMsg: this.I18NService.translate('errors.InvalidUserCredentials'),
@@ -57,10 +66,17 @@ export class AuthService implements IAuthService {
       }
     }
 
+    const { accessToken, refreshToken } = await this.authTokenService.generateAuthToken(userFound)
+
+    // TODO: ADD TRANSLATION TO SUCCESS MSG
     return {
       success: true,
-      translatedMsg: 'success',
-      user: userFound.transformToUserDto()
+      translatedMsg: 'success signin',
+      user: {
+        ...userFound,
+        accessToken,
+        refreshToken
+      }
     }
   }
 }

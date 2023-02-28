@@ -3,10 +3,12 @@ import jwt from 'jsonwebtoken'
 import { environment } from '../../common/config/environment.config'
 import { IUserDTO } from '../../users/dtos/User.dto'
 
-type generateAuthTokenResponse = Promise<{
+export interface AuthTokens{
   accessToken: string,
   refreshToken: string
-}>
+}
+
+type generateAuthTokenResponse = Promise<AuthTokens>
 
 export interface IAuthTokenService{
   generateAuthToken(user: IUserDTO): generateAuthTokenResponse

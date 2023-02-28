@@ -1,23 +1,20 @@
 import { injectable, inject } from 'tsyringe'
 import { authContainerTypes } from '../../common/IOC/types'
-import { BaseController, IControllerRequest, IControllerResponse, INextFunction } from '../../common/httpServer/interfaces'
+import { BaseController, IControllerRequest, IControllerResponse, INextFunction, HttpStatusCodes } from '../../common/httpServer/interfaces'
 import { IUserDTO } from '../../users/dtos/User.dto'
-import { BadRequestError, HttpStatusCodes } from '../../common/errors/errors.common'
-import { IAuthService, IAuthTokenService } from '../services'
+import { BadRequestError } from '../../common/errors/errors.common'
+import { IAuthService } from '../services'
 
 @injectable()
 export class SignInController extends BaseController {
   private authService: IAuthService
-  private authTokenService: IAuthTokenService
 
   constructor (
-        @inject(authContainerTypes.AuthService) authService: IAuthService,
-        @inject(authContainerTypes.AuthTokenService) authTokenService: IAuthTokenService
+        @inject(authContainerTypes.AuthService) authService: IAuthService
   ) {
     super()
 
     this.authService = authService
-    this.authTokenService = authTokenService
   }
 
   async processRequest (req: IControllerRequest, next: INextFunction): Promise<IControllerResponse | void> {
@@ -26,11 +23,9 @@ export class SignInController extends BaseController {
 
     const { success, user: userData, translatedMsg } = await this.authService.signIn(user)
 
-    if (!success) {
+    if (!success || !userData) {
       throw new BadRequestError({ msg: translatedMsg })
     }
-
-    const { accessToken, refreshToken } = await this.authTokenService.generateAuthToken(user)
 
     if (userData) {
       // don't send password
@@ -41,9 +36,7 @@ export class SignInController extends BaseController {
         ok: true,
         msg: {
           user: {
-            ...userDataWithOutPassword,
-            accessToken,
-            refreshToken
+            ...userDataWithOutPassword
           }
         }
       }

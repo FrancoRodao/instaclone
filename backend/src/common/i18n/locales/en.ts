@@ -11,7 +11,6 @@ export const localeEN = {
   errors: {
     '{{FIELD}}MustHaveAtLeast{{X}}Characters': '{{FIELD}} must have at least {{X}} characters',
     EmailIsAlreadyRegistered: 'This email is already registered, please use another one',
-    UsersDoesntExists: "The user doesn't exist, please sign up.",
     InvalidUserCredentials: 'Invalid user credentials.'
   }
 }
