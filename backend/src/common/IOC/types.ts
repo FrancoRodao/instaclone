@@ -17,5 +17,6 @@ export const authContainerTypes = {
 }
 
 export const usersContainerTypes = {
-  UserRepository: 'UserRepository'
+  UserRepository: 'UserRepository',
+  UserService: 'UserService'
 }

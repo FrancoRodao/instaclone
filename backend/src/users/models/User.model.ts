@@ -28,9 +28,9 @@ export class UserModel extends Model<InferAttributes<UserModel>, InferCreationAt
     }
   }
 
-  public async isCorrectPassword (originalPassword: string, hashedPassword: string): Promise<Boolean> {
+  public async isCorrectPassword (password: string, hashedPassword: string): Promise<Boolean> {
     return await bcrypt
-      .compare(originalPassword, hashedPassword)
+      .compare(password, hashedPassword)
       .then(res => res)
       .catch(err => {
         throw err
