@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { APIBaseError } from '../errors.common'
 import { apiErrorHandler } from '../errorHandler.common'
 import { HttpStatusCodes } from '../../httpServer/interfaces'

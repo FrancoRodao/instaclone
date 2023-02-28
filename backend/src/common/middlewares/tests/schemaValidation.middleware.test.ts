@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { ISchemaValidationResponse, SchemaValidationMiddleware } from '../schemaValidation.middleware'
 import { ValidationError } from '../../errors/errors.common'
 

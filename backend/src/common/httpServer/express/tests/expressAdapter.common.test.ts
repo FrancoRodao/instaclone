@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import express, { Router } from 'express'
 import { ExpressRouterAdapter } from '../expressRouter.common'
 import { BaseMiddleware } from '../../../middlewares/middleware.interface'
