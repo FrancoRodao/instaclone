@@ -7,7 +7,7 @@
     "backend:dev": "cd ./backend & npm run dev",
     "backend:lint": "cd ./backend & npm run lint",
     "backend:test": "cd ./backend & npm run test",
-    "backend:test:staged": "cd ./backend & npm run test",
+    "backend:test:staged": "cd ./backend & npm run test:staged",
     "prepare": "husky install"
   },
   "author": "",

@@ -24,5 +24,7 @@ export abstract class BaseRouter<Router> {
   public abstract patch(path: string, middlewares: BaseMiddleware[], controller: BaseController): void
   public abstract delete(path: string, middlewares: BaseMiddleware[], controller: BaseController): void
 
+  public abstract swagger(routePath: string, swaggerDocumentAbsolutePath: string): void
+
   public abstract getRoutes(): Router
 }

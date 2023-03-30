@@ -1,3 +1,7 @@
+import fs from 'fs'
+import { resolveRefs } from 'json-refs'
+import YAML from 'js-yaml'
+import swaggerUI from 'swagger-ui-express'
 import { Request, Response, NextFunction, Router as expressRouter, RequestHandler } from 'express'
 import { BaseController, BaseMiddleware } from '../interfaces'
 import { IHttpVerbs, BaseRouter } from '../../router/baseRouter.common'
@@ -74,6 +78,34 @@ export class ExpressRouterAdapter extends BaseRouter<expressRouter> {
 
   public patch (path: string, middlewares: BaseMiddleware[], controller: BaseController) {
     this.adaptRoute('patch')(path, middlewares, controller)
+  }
+
+  public swagger (routePath: string, swaggerDocumentAbsolutePath: string): void {
+    function yamlContentProcessor (res: { text: string }, callback: (err: Error | undefined, done: Object | unknown) => void) {
+      callback(undefined, YAML.load(res.text))
+    }
+
+    /*
+      The default references in swagger are not very flexible,
+      that is why I think it is better to use json-refs
+      to avoid as much as possible the duplication of text
+      in swagger files.
+    */
+    async function getSwaggerDocWithRefs (rootFilePath: string) {
+      const rootSwaggerDoc = YAML.load(fs.readFileSync(rootFilePath).toString()) as Object
+      const swaggerDoc = await resolveRefs(rootSwaggerDoc, {
+        location: rootFilePath,
+        loaderOptions: {
+          processContent: yamlContentProcessor
+        }
+      })
+
+      return swaggerDoc.resolved
+    }
+
+    getSwaggerDocWithRefs(swaggerDocumentAbsolutePath).then(swaggerDocResolved => {
+      this.router.use(routePath, swaggerUI.serveFiles(swaggerDocResolved), swaggerUI.setup(swaggerDocResolved))
+    })
   }
 
   public getRoutes () {

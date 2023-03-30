@@ -10,7 +10,7 @@
 		"debug": "cross-env NODE_ENV=debugging DEBUG=1 nodemon --inspect ./src/index.ts",
 		"test": "jest",
 		"test:watch": "jest --watchAll",
-		"test:staged": "jest --bail --findRelatedTests --passWithNoTests",
+		"test:staged": "jest --passWithNoTests --bail --findRelatedTests",
 		"lint": "eslint --fix --ext .ts,.js ./src"
 	},
 	"author": "",
