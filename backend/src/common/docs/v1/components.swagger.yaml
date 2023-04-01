@@ -1,0 +1,11 @@
+components:
+  parameters:
+    accept-language:
+      in: header
+      name: accept-language
+      schema:
+        type: string
+        enum:
+          - es
+          - en
+      required: true

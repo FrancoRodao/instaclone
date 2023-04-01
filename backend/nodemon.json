@@ -2,5 +2,6 @@
 	"execMap": {
 		"ts": "node --require ts-node/register"
 	},
-	"watch": "src/**"
+	"watch": "src/**",
+	"ext": ".yaml, .json, .ts, .js"
 }

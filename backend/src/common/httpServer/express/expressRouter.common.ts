@@ -80,6 +80,7 @@ export class ExpressRouterAdapter extends BaseRouter<expressRouter> {
     this.adaptRoute('patch')(path, middlewares, controller)
   }
 
+  // TODO: ADD TEST
   public swagger (routePath: string, swaggerDocumentAbsolutePath: string): void {
     function yamlContentProcessor (res: { text: string }, callback: (err: Error | undefined, done: Object | unknown) => void) {
       callback(undefined, YAML.load(res.text))

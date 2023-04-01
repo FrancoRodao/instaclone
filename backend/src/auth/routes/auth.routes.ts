@@ -1,3 +1,4 @@
+import path from 'path'
 import { globalContainerTypes, authContainerTypes } from '../../common/IOC/types'
 import { dependencyContainer } from '../../common/IOC/global.container'
 import { signUpSchemaValidationMiddleware, sanitizeUser } from '../middlewares'
@@ -23,6 +24,9 @@ export const authRouter = (app: IHttpServer) => {
     [signInSchemaValidationMiddleware],
     dependencyContainer.resolve(authContainerTypes.SignInController)
   )
+
+  /* DOCUMENTATION */
+  router.swagger('/docs/auth', path.resolve(__dirname, '../docs/v1/auth.swagger.yaml'))
 
   return router
 }

@@ -1,0 +1,108 @@
+openapi: 3.0.2
+info:
+  title: Auth Module V1
+  description: Auth Module API Documentation
+  version: "1.0"
+servers:
+  - url: http://localhost:3000/api/v1/auth
+    description: "Development server"
+  - url: https://productionserver/api/v1/auth
+    description: "Production server"
+paths:
+  /signin:
+    post:
+      summary: signin an user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignIn"
+      responses:
+        "200":
+          description: Successful signin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+        "400":
+          description: Invalid user credentials
+      parameters:
+        - $ref: "#/components/parameters/accept-language"
+  /signup:
+    post:
+      summary: signup an user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUp"
+      responses:
+        "201":
+          description: Successful signup
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+        "400":
+          description: Email is already registered
+      parameters:
+        - $ref: "#/components/parameters/accept-language"
+
+components:
+  schemas:
+    SignIn:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+          example: franco@gmail.com
+        password:
+          type: string
+          example: 123456
+    SignUp:
+      required:
+        - fullName
+        - email
+        - password
+      type: object
+      properties:
+        fullName:
+          type: string
+          example: Jhon Doe
+        email:
+          type: string
+          example: jhondoe@gmail.com
+        password:
+          type: string
+          example: 123456
+    AuthResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        status:
+          type: number
+          example: 200
+        msg:
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+                fullName:
+                  type: string
+                email:
+                  type: string
+                accessToken:
+                  type: string
+                refreshToken:
+                  type: string
+  parameters:
+    $ref: ../../../common/docs/v1/components.swagger.yaml#/components/parameters
