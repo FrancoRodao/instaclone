@@ -3,7 +3,7 @@
 // eslint-disable-next-line import/no-duplicates
 import './common/config/environment.config'
 
-import 'reflect-metadata'
+import 'reflect-metadata' // required for tsyringe
 import { loadDependencyContainers } from './common/IOC/global.container'
 
 import express from 'express'

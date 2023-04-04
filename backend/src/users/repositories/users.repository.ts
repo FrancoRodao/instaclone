@@ -22,8 +22,6 @@ export class SequelizeUserRepository implements IUserRepository {
       where: { email }
     })
 
-    if (userFound) return userFound
-
-    return null
+    return userFound || null
   }
 }

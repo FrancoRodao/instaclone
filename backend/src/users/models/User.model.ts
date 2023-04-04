@@ -2,6 +2,7 @@ import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, 
 import { database } from '../../common/database/init.database'
 import bcrypt from 'bcryptjs'
 import { IUserDTO } from '../dtos/User.dto'
+import { isTestENV } from '../../utils/environments'
 
 const ROLES = ['USER', 'MODERATOR', 'ADMIN'] as const
 export type IRoles = typeof ROLES[number]
@@ -29,6 +30,9 @@ export class UserModel extends Model<InferAttributes<UserModel>, InferCreationAt
   }
 
   public async isCorrectPassword (password: string, hashedPassword: string): Promise<Boolean> {
+    // passwords are not encrypted in test env
+    if (isTestENV) return password === hashedPassword
+
     return await bcrypt
       .compare(password, hashedPassword)
       .then(res => res)
@@ -69,6 +73,7 @@ UserModel.init({
   tableName: 'User'
 })
 
+// Before save/create any user encrypt password
 UserModel.beforeCreate('encryptPassword', async (user: UserModel) => {
   // TODO: ABSTRACT BCRYPT
   const salt = await bcrypt.genSalt(10)

@@ -5,6 +5,9 @@ import { IUserRepository } from '../repositories/users.repository'
 export interface IUserService{
   create(userDTO: IUserDTO): Promise<IUserDTO>,
   isUserExists(email: string): Promise<boolean>,
+  /**
+   * Returns the user if credentials are correct, otherwise returns null
+  */
   areValidUserCredentials(email: string, password: string): Promise<IUserDTO | null>
 }
 
@@ -32,9 +35,6 @@ export class UserService implements IUserService {
     return false
   }
 
-  /**
-   * Returns the user if credentials are correct, otherwise returns null
-  */
   async areValidUserCredentials (email: string, password: string): Promise<IUserDTO | null> {
     const userFound = await this.userRepository.getByEmail(email)
 
