@@ -1,4 +1,4 @@
 {
-  "backend/src/**/*.{js,jsx,ts,tsx}": ["npm run backend:lint", "npm run backend:test:staged"],
+  "backend/src/**/*.{js,jsx,ts,tsx}": ["npm run backend:lint:staged", "npm run backend:test:staged"],
   "frontend/src/**/*.{js,jsx,ts,tsx}": ["npm run frontend:lint"]
 }
