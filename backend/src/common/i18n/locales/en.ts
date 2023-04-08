@@ -1,3 +1,5 @@
+import { ITranslationStructure } from './translationsStructure'
+
 /*
   ---= CONVECTION =---
 
@@ -5,7 +7,7 @@
   need an interpolation value
 */
 
-export const localeEN = {
+export const localeEN: ITranslationStructure = {
   fullName: 'Full name',
 
   errors: {

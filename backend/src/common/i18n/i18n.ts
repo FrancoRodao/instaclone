@@ -1,19 +1,30 @@
 import i18next, { Resource } from 'i18next'
 import { localeEN, localeES } from './locales/index'
 import { isDevelopmentENV } from '../../utils/environments'
+import { ITranslationStructure } from './locales/translationsStructure'
 
-type IAvailableLanguages = 'en' | 'es'
+export type IAvailableLanguages = 'en' | 'es'
+type IAvailableLanguagesConfig = Record<IAvailableLanguages, { translationFile: ITranslationStructure}>
+type ITranslationsKeys = keyof Omit<ITranslationStructure, 'errors'> | `errors.${keyof ITranslationStructure['errors']}`
 
 export abstract class I18NService {
   protected abstract defaultLanguage: IAvailableLanguages
-  protected abstract availableLanguages: Record<IAvailableLanguages, {
-    translationsFile: string | Object
-  }>
+  protected abstract availableLanguages: IAvailableLanguagesConfig
 
   public abstract currentLanguage: IAvailableLanguages
 
-  public abstract translate (translationKeys: string | string[], options?: Object): string
-  public abstract getLanguages (): string[]
+  /**
+    CONVECTION: keywords of translation inside {{ }} and in uppercase need an interpolation value
+
+    @example
+    translate('{{FIELD}}MustHaveAtLeast{{X}}Characters', {FIELD: 'Full name', X: '5'})
+    /*
+      FIELD and X are interpolation value
+      in this case 'FIELD='Full name' and X='5'
+    /*
+  */
+  public abstract translate (translationKey: ITranslationsKeys, options?: Object): string
+  public abstract getLanguages (): IAvailableLanguages[]
   public abstract isAvailableLanguage (lang: string): boolean
   public abstract changeLanguage (lang: IAvailableLanguages): void
 }
@@ -26,12 +37,12 @@ export class I18NNextService extends I18NService {
    To add a new language just add one more element to the object
    with its translation file.
   */
-  protected availableLanguages: Record<IAvailableLanguages, { translationsFile: Object }> = {
+  protected availableLanguages: IAvailableLanguagesConfig = {
     en: {
-      translationsFile: localeEN
+      translationFile: localeEN
     },
     es: {
-      translationsFile: localeES
+      translationFile: localeES
     }
   }
 
@@ -40,21 +51,8 @@ export class I18NNextService extends I18NService {
     this.init()
   }
 
-  /**
-  ---= CONVECTION =---
-
-  keywords of translation inside {{ }} and in uppercase
-  need an interpolation value
-
-  @example
-  translate('{{FIELD}}MustHaveAtLeast{{X}}Characters', {FIELD: 'Full name', X: '5'})
-  /*
-    FIELD and X are interpolation value
-    in this case 'FIELD='Full name' and X='5'
-  /*
-  */
-  translate (keys: string | string[], options?: Object): string {
-    return i18next.t(keys, options)
+  translate (key: ITranslationsKeys, options?: Object): string {
+    return i18next.t(key, options)
   }
 
   private async init () {
@@ -65,7 +63,7 @@ export class I18NNextService extends I18NService {
     resourcesKeys.forEach((k: IAvailableLanguages) => {
       Object.defineProperty(resources, k, {
         value: {
-          translation: this.availableLanguages[k].translationsFile
+          translation: this.availableLanguages[k].translationFile
         }
       })
     })
@@ -79,8 +77,8 @@ export class I18NNextService extends I18NService {
     })
   }
 
-  getLanguages (): string[] {
-    return Object.keys(this.availableLanguages)
+  getLanguages (): IAvailableLanguages[] {
+    return Object.keys(this.availableLanguages) as IAvailableLanguages[]
   }
 
   // case insensitive
