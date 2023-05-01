@@ -1,49 +1,29 @@
-import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model } from 'sequelize'
-import { database } from '../../common/database/init.database'
+import { DataTypes, ModelDefined } from 'sequelize'
 import bcrypt from 'bcryptjs'
-import { IUserDTO } from '../dtos/User.dto'
-import { isTestENV } from '../../utils/environments'
+import { sequelize } from '../../common/database/init.database'
+import { Optional } from '../../types/index'
 
+// IRoles and ROLES must be synchronized, ROLES act as value and IRoles acts as interface
 const ROLES = ['USER', 'MODERATOR', 'ADMIN'] as const
 export type IRoles = typeof ROLES[number]
-export const DEFAULT_ROLE = 'USER'
-if (!ROLES.includes(DEFAULT_ROLE)) throw new Error('DEFAULT_ROLE must be in ROLES_ENUMS')
+export const DEFAULT_USER_ROLE = 'USER'
+if (!ROLES.includes(DEFAULT_USER_ROLE)) throw new Error('DEFAULT_USER_ROLE must be in ROLES_ENUMS')
 
-// eslint-disable-next-line no-use-before-define
-export class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel, { omit: 'id' | 'role' }>> {
-  // 'CreationOptional' is a special type that marks the field as optional
-  // when creating an instance of the model (such as using Model.create()).
-
-  declare id: CreationOptional<string>
-  declare fullName: string
-  declare email: string
-  declare password: string
-  declare role: IRoles
-
-  public transformToUserDto (): IUserDTO {
-    return {
-      id: this.id,
-      fullName: this.fullName,
-      email: this.email,
-      password: this.password
-    }
-  }
-
-  public async isCorrectPassword (password: string, hashedPassword: string): Promise<Boolean> {
-    // passwords are not encrypted in test env
-    if (isTestENV) return password === hashedPassword
-
-    return await bcrypt
-      .compare(password, hashedPassword)
-      .then(res => res)
-      .catch(err => {
-        throw err
-      })
-  }
+export interface IUserModel{
+  readonly id: string
+  readonly fullName: string
+  readonly email: string
+  readonly password: string
+  readonly role: IRoles
 }
 
+type UserModelCreationAttributes = Optional<IUserModel, 'id' | 'role'>;
+
 // TODO: ADD POSTS TO USER MODEL THINK ABOUT PROPS
-UserModel.init({
+export const SequelizeUserModel: ModelDefined<
+IUserModel,
+UserModelCreationAttributes
+> = sequelize.define('User', {
   id: {
     primaryKey: true,
     type: DataTypes.UUID,
@@ -66,18 +46,15 @@ UserModel.init({
   role: {
     type: DataTypes.ENUM,
     values: ROLES,
-    defaultValue: DEFAULT_ROLE
+    defaultValue: DEFAULT_USER_ROLE
   }
-}, {
-  sequelize: database,
-  tableName: 'User'
 })
 
 // Before save/create any user encrypt password
-UserModel.beforeCreate('encryptPassword', async (user: UserModel) => {
+SequelizeUserModel.beforeCreate('encryptPassword', async (user) => {
   // TODO: ABSTRACT BCRYPT
   const salt = await bcrypt.genSalt(10)
-  const hashedPassword = await bcrypt.hash(user.password, salt)
+  const hashedPassword = await bcrypt.hash(user.dataValues.password, salt)
 
-  user.password = hashedPassword
+  user.update({ password: hashedPassword })
 })

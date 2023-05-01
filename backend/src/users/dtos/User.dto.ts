@@ -1,6 +1,5 @@
-export type IUserDTO = {
-    readonly id?: string,
-    readonly fullName: string,
-    readonly email: string,
-    readonly password: string,
-}
+import { IUserModel } from '../models'
+import { Optional } from '../../types'
+
+type IUserWithOutRole = Omit<IUserModel, 'role'>
+export type IUserDTO = Optional<IUserWithOutRole, 'id'>

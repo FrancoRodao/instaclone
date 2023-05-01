@@ -1,7 +1,8 @@
 import { inject, injectable } from 'tsyringe'
 import { IUserDTO } from '../dtos/User.dto'
 import { usersContainerTypes } from '../../common/IOC/types'
-import { IUserRepository } from '../repositories/users.repository'
+import { IUserRepository } from '../repositories'
+
 export interface IUserService{
   create(userDTO: IUserDTO): Promise<IUserDTO>,
   isUserExists(email: string): Promise<boolean>,
@@ -37,8 +38,7 @@ export class UserService implements IUserService {
 
   async areValidUserCredentials (email: string, password: string): Promise<IUserDTO | null> {
     const userFound = await this.userRepository.getByEmail(email)
-
-    const isCorrectPassword = await userFound?.isCorrectPassword(password, userFound.password)
+    const isCorrectPassword = await userFound?.isCorrectPassword(password)
 
     // userFound may not exist (null)
     if (userFound && isCorrectPassword) {

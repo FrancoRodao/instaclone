@@ -1,27 +1,25 @@
 import { injectable } from 'tsyringe'
 import { IUserDTO } from '../dtos/User.dto'
-import { UserModel } from '../models/index.model'
-
-export interface IUserRepository{
-  store(userDTO: IUserDTO): Promise<UserModel>,
-  getByEmail(email: string): Promise<UserModel | null>
-}
+import { SequelizeUserModel, UserEntity } from '../models'
+import { IUserRepository } from './users.repository.interface'
 
 @injectable()
 export class SequelizeUserRepository implements IUserRepository {
   constructor () {}
 
-  async store (userDTO: IUserDTO): Promise<UserModel> {
-    const newUser = await UserModel.create(userDTO)
+  async store (userDTO: IUserDTO): Promise<UserEntity> {
+    const newUser = await SequelizeUserModel.create(userDTO)
 
-    return newUser
+    const userValues = newUser.dataValues
+
+    return new UserEntity(userValues)
   }
 
-  async getByEmail (email: string): Promise<UserModel | null> {
-    const userFound = await UserModel.findOne({
+  async getByEmail (email: string): Promise<UserEntity | null> {
+    const userFound = await SequelizeUserModel.findOne({
       where: { email }
     })
 
-    return userFound || null
+    return userFound ? new UserEntity(userFound.dataValues) : null
   }
 }
