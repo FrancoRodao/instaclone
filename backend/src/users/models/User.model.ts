@@ -1,7 +1,10 @@
-import { DataTypes, ModelDefined } from 'sequelize'
 import bcrypt from 'bcryptjs'
+import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../../common/database/init.database'
 import { Optional } from '../../types/index'
+import { IPostModel } from '../../posts/models'
+import { IPostCommentModel } from '../../posts/models/postComment'
+import { IPostLikeModel } from '../../posts/models/postLike.model'
 
 // IRoles and ROLES must be synchronized, ROLES act as value and IRoles acts as interface
 const ROLES = ['USER', 'MODERATOR', 'ADMIN'] as const
@@ -15,15 +18,17 @@ export interface IUserModel{
   readonly email: string
   readonly password: string
   readonly role: IRoles
+  readonly posts?: IPostModel[]
+  readonly postLikes?: IPostLikeModel[]
+  readonly comments?: IPostCommentModel
 }
 
 type UserModelCreationAttributes = Optional<IUserModel, 'id' | 'role'>;
 
-// TODO: ADD POSTS TO USER MODEL THINK ABOUT PROPS
-export const SequelizeUserModel: ModelDefined<
-IUserModel,
-UserModelCreationAttributes
-> = sequelize.define('User', {
+export class SequelizeUserModel extends
+  Model<IUserModel, UserModelCreationAttributes> {}
+
+SequelizeUserModel.init({
   id: {
     primaryKey: true,
     type: DataTypes.UUID,
@@ -48,13 +53,17 @@ UserModelCreationAttributes
     values: ROLES,
     defaultValue: DEFAULT_USER_ROLE
   }
+}, {
+  sequelize,
+  modelName: 'user'
 })
 
 // Before save/create any user encrypt password
 SequelizeUserModel.beforeCreate('encryptPassword', async (user) => {
   // TODO: ABSTRACT BCRYPT
   const salt = await bcrypt.genSalt(10)
-  const hashedPassword = await bcrypt.hash(user.dataValues.password, salt)
+  const userDataValues = user.dataValues
+  const hashedPassword = await bcrypt.hash(userDataValues.password, salt)
 
-  user.update({ password: hashedPassword })
+  user.set('password', hashedPassword)
 })

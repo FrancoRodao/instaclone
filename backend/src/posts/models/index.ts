@@ -1,0 +1,5 @@
+export * from './post.model'
+export * from './postComment.model'
+export * from './postLike.model'
+export * from './userTaggedInPost.model'
+export * from './associations.model'

@@ -4,6 +4,7 @@ import { logger } from '../../utils/logger'
 
 export const sequelize = new Sequelize({
   dialect: 'postgres',
+  // TODO: ADD DBHOST TO ENV VARIABLE
   host: 'localhost',
   database: environment.dbName,
   username: environment.dbUsername,
