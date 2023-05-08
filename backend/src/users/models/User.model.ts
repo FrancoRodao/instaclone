@@ -3,7 +3,7 @@ import { DataTypes, Model } from 'sequelize'
 import { sequelize } from '../../common/database/init.database'
 import { Optional } from '../../types/index'
 import { IPostModel } from '../../posts/models'
-import { IPostCommentModel } from '../../posts/models/postComment'
+import { IPostCommentModel } from '../../posts/models/postComment.model'
 import { IPostLikeModel } from '../../posts/models/postLike.model'
 
 // IRoles and ROLES must be synchronized, ROLES act as value and IRoles acts as interface
@@ -20,7 +20,9 @@ export interface IUserModel{
   readonly role: IRoles
   readonly posts?: IPostModel[]
   readonly postLikes?: IPostLikeModel[]
-  readonly comments?: IPostCommentModel
+  readonly postComments?: IPostCommentModel
+  readonly userFollowers?: IUserModel[]
+  readonly userFollowed?: IUserModel[]
 }
 
 type UserModelCreationAttributes = Optional<IUserModel, 'id' | 'role'>;
