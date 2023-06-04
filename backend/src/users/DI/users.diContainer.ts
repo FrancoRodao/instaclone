@@ -1,22 +1,21 @@
-import { dependencyContainer } from '../../common/IOC/global.container'
-import { usersContainerTypes } from '../../common/IOC/types'
+import { GlobalDIContainer } from '../../common/DI/global.diContainer'
+import { usersDITypes } from './users.diTypes'
 import { SequelizeUserRepository, IUserRepository } from '../repositories'
 import { IUserService, UserService } from '../services/users.service'
 import { Lifecycle } from 'tsyringe'
 
-export function loadUsersContainer () {
+export function loadUsersDIContainer () {
   // services
-  dependencyContainer.register<IUserService>(
-    usersContainerTypes.UserService,
+  GlobalDIContainer.register<IUserService>(
+    usersDITypes.UserService,
     { useClass: UserService },
     { lifecycle: Lifecycle.Singleton }
   )
 
   // repos
-  dependencyContainer.register<IUserRepository>(
-    usersContainerTypes.UserRepository,
+  GlobalDIContainer.register<IUserRepository>(
+    usersDITypes.UserRepository,
     { useClass: SequelizeUserRepository },
     { lifecycle: Lifecycle.Singleton }
-
   )
 }
